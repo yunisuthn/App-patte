@@ -45,23 +45,53 @@ export const montantMouvement = (m) => TYPES_MOUVEMENT[m.type].signe * m.montant
 
 // Rejoue l'historique d'un client dans l'ordre. Après chaque ligne :
 // - solde : > 0 le client me doit, < 0 je lui dois ;
-// - qtes : produits pris depuis la dernière fois où il était à jour, par produitId
-//   (comme « Total : 12 + fromage 1 » dans l'Excel). Remis à zéro quand tout est payé.
+// - qtes : produits pas encore payés, par produitId (comme « Total : 12 + fromage 1 » dans l'Excel).
+//   L'argent reçu ne règle que des articles entiers ; le surplus attend les prochains articles.
 export function rejouerClient(ventes, mouvements) {
   const lignes = [
     ...ventes.map((v) => ({ vente: v, date: v.date, ordre: v.creeLe ?? 0, montant: montantVente(v) })),
     ...mouvements.map((m) => ({ mouvement: m, date: m.date, ordre: m.creeLe ?? 0, montant: montantMouvement(m) })),
   ].sort((a, b) => a.date.localeCompare(b.date) || a.ordre - b.ordre)
   let solde = 0
-  let qtes = {}
+  // Articles non payés, du plus ancien au plus récent : { produitId, montant }
+  // (produitId null pour un montant ajouté à la main). Toujours : solde = somme des dus − avance.
+  let dus = []
+  let avance = 0 // argent reçu (ou monnaie que je dois) pas encore affecté à un article
   for (const l of lignes) {
     solde += l.montant
-    if (l.vente) qtes = { ...qtes, [l.vente.produitId]: (qtes[l.vente.produitId] ?? 0) + l.vente.qte }
-    if (Math.round(solde) <= 0) qtes = {}
+    if (l.vente) {
+      for (let i = 0; i < l.vente.qte; i++) dus.push({ produitId: l.vente.produitId, montant: l.vente.prix })
+    } else if (l.montant > 0) {
+      dus.push({ produitId: null, montant: l.montant })
+    } else {
+      avance -= l.montant
+    }
+    ;[dus, avance] = reglerArticles(dus, avance)
     l.solde = solde
-    l.qtes = qtes
+    l.qtes = {}
+    for (const d of dus) if (d.produitId != null) l.qtes[d.produitId] = (l.qtes[d.produitId] ?? 0) + 1
   }
-  return { lignes, solde, qtes }
+  return { lignes, solde, qtes: lignes.at(-1)?.qtes ?? {} }
+}
+
+// Avec l'avance, règle les articles dont le total s'en approche le plus sans la dépasser
+// (à égalité, les plus anciens). Ex. : 2 patte + 1 fromage, 2 000 Ar payés → reste 1 patte.
+function reglerArticles(dus, avance) {
+  const total = dus.reduce((s, d) => s + d.montant, 0)
+  if (Math.round(avance) >= Math.round(total)) return [[], avance - total]
+  if (avance <= 0) return [dus, avance]
+  // Sommes atteignables → { precedente, index } de l'article ajouté, pour retrouver la combinaison.
+  const sommes = new Map([[0, null]])
+  dus.forEach((d, index) => {
+    for (const s of [...sommes.keys()]) {
+      const t = s + d.montant
+      if (t <= avance && !sommes.has(t) && sommes.size < 5000) sommes.set(t, { precedente: s, index })
+    }
+  })
+  const somme = Math.max(...sommes.keys())
+  const regles = new Set()
+  for (let s = somme; sommes.get(s); s = sommes.get(s).precedente) regles.add(sommes.get(s).index)
+  return [dus.filter((_, i) => !regles.has(i)), avance - somme]
 }
 
 export function comptesParClient(ventes, mouvements) {
