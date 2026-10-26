@@ -5,3 +5,9 @@ body {
   color: #1f2937;
   -webkit-tap-highlight-color: transparent;
 }
+
+/* Tailwind 4 laisse le curseur par défaut sur les boutons ; la souris doit voir qu'ils sont cliquables. */
+button:not(:disabled),
+label:has(> input[type='file']) {
+  cursor: pointer;
+}

@@ -58,40 +58,46 @@ export default function ClientDetail({ clientId, onRetour }) {
   }
 
   return (
-    <div className="space-y-4">
-      <button type="button" onClick={onRetour} className="text-sm font-medium text-orange-700">
-        ‹ Clients
-      </button>
+    <div className="space-y-4 lg:grid lg:grid-cols-[22rem_1fr] lg:items-start lg:gap-6 lg:space-y-0">
+      <div className="space-y-4 lg:sticky lg:top-8">
+        <button type="button" onClick={onRetour} className="text-sm font-medium text-orange-700">
+          ‹ Clients
+        </button>
 
-      <Carte>
-        <div className="flex items-start justify-between">
-          <h1 className="text-2xl font-bold">{client.nom}</h1>
-          <button type="button" onClick={renommer} className="text-sm text-gray-500 underline">
-            Renommer
-          </button>
-        </div>
-        <div className="mt-1">
-          <Solde montant={solde} grand />
-        </div>
-        {texteQuantites(compte.qtes, produits) && (
-          <div className="mt-1 text-gray-600">Non payé : {texteQuantites(compte.qtes, produits)}</div>
-        )}
-      </Carte>
+        <Carte>
+          <div className="flex items-start justify-between">
+            <h1 className="text-2xl font-bold">{client.nom}</h1>
+            <button type="button" onClick={renommer} className="text-sm text-gray-500 underline">
+              Renommer
+            </button>
+          </div>
+          <div className="mt-1">
+            <Solde montant={solde} grand />
+          </div>
+          {texteQuantites(compte.qtes, produits) && (
+            <div className="mt-1 text-gray-600">Non payé : {texteQuantites(compte.qtes, produits)}</div>
+          )}
+        </Carte>
 
-      <div className="grid grid-cols-2 gap-2">
-        <Bouton onClick={() => setForm('credit')}>+ Crédit produit</Bouton>
-        <Bouton onClick={() => setForm('paiement')}>Il m’a payé</Bouton>
-        <Bouton variante="secondaire" onClick={() => setForm('reste')}>
-          Reste à payer
-        </Bouton>
-        <Bouton variante="secondaire" onClick={() => setForm('monnaie')}>
-          Je lui dois
-        </Bouton>
-        {solde < 0 && (
-          <Bouton variante="secondaire" className="col-span-2" onClick={() => setForm('rendu')}>
-            Je lui ai rendu la monnaie
+        <div className="grid grid-cols-2 gap-2">
+          <Bouton onClick={() => setForm('credit')}>+ Crédit produit</Bouton>
+          <Bouton onClick={() => setForm('paiement')}>Il m’a payé</Bouton>
+          <Bouton variante="secondaire" onClick={() => setForm('reste')}>
+            Reste à payer
           </Bouton>
-        )}
+          <Bouton variante="secondaire" onClick={() => setForm('monnaie')}>
+            Je lui dois
+          </Bouton>
+          {solde < 0 && (
+            <Bouton variante="secondaire" className="col-span-2" onClick={() => setForm('rendu')}>
+              Je lui ai rendu la monnaie
+            </Bouton>
+          )}
+        </div>
+
+        <Bouton variante="danger" className="hidden w-full lg:block" onClick={supprimer}>
+          Supprimer ce client
+        </Bouton>
       </div>
 
       <Carte sansMarge>
@@ -129,7 +135,7 @@ export default function ClientDetail({ clientId, onRetour }) {
         )}
       </Carte>
 
-      <Bouton variante="danger" className="w-full" onClick={supprimer}>
+      <Bouton variante="danger" className="w-full lg:hidden" onClick={supprimer}>
         Supprimer ce client
       </Bouton>
 

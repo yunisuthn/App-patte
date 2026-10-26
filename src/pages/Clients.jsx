@@ -31,30 +31,32 @@ export default function Clients({ onOuvrirClient }) {
   }
 
   return (
-    <div className="space-y-4">
-      <div className="grid grid-cols-2 gap-3">
-        <Carte>
-          <div className="text-sm text-gray-500">On me doit</div>
-          <div className="text-xl font-semibold text-orange-700 tabular-nums">{ar(onMeDoit)}</div>
-        </Carte>
-        <Carte>
-          <div className="text-sm text-gray-500">Je dois</div>
-          <div className="text-xl font-semibold text-sky-700 tabular-nums">{ar(jeDois)}</div>
-        </Carte>
-      </div>
+    <div className="space-y-4 lg:grid lg:grid-cols-[18rem_1fr] lg:items-start lg:gap-6 lg:space-y-0">
+      <div className="space-y-4 lg:sticky lg:top-8">
+        <div className="grid grid-cols-2 gap-3 lg:grid-cols-1">
+          <Carte>
+            <div className="text-sm text-gray-500">On me doit</div>
+            <div className="text-xl font-semibold text-orange-700 tabular-nums">{ar(onMeDoit)}</div>
+          </Carte>
+          <Carte>
+            <div className="text-sm text-gray-500">Je dois</div>
+            <div className="text-xl font-semibold text-sky-700 tabular-nums">{ar(jeDois)}</div>
+          </Carte>
+        </div>
 
-      <div className="flex gap-2">
-        <input
-          className={classeInput}
-          placeholder="Chercher ou ajouter un client"
-          value={recherche}
-          onChange={(e) => setRecherche(e.target.value)}
-        />
-        {filtre && !clients.some((c) => c.nom.toLowerCase() === filtre) && (
-          <Bouton className="shrink-0" onClick={ajouter}>
-            Ajouter
-          </Bouton>
-        )}
+        <div className="flex gap-2">
+          <input
+            className={classeInput}
+            placeholder="Chercher ou ajouter un client"
+            value={recherche}
+            onChange={(e) => setRecherche(e.target.value)}
+          />
+          {filtre && !clients.some((c) => c.nom.toLowerCase() === filtre) && (
+            <Bouton className="shrink-0" onClick={ajouter}>
+              Ajouter
+            </Bouton>
+          )}
+        </div>
       </div>
 
       <Carte sansMarge>
@@ -63,7 +65,7 @@ export default function Clients({ onOuvrirClient }) {
             <li key={c.id}>
               <button
                 type="button"
-                className="flex w-full items-center justify-between px-4 py-3 text-left active:bg-orange-50"
+                className="flex w-full items-center justify-between px-4 py-3 text-left hover:bg-orange-50/50 active:bg-orange-50"
                 onClick={() => onOuvrirClient(c.id)}
               >
                 <span>
