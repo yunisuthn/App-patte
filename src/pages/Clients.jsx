@@ -32,7 +32,7 @@ export default function Clients({ onOuvrirClient }) {
 
   return (
     <div className="space-y-4 lg:grid lg:grid-cols-[18rem_1fr] lg:items-start lg:gap-6 lg:space-y-0">
-      <div className="space-y-4 lg:sticky lg:top-8">
+      <div className="space-y-4 lg:sticky lg:top-22">
         <div className="grid grid-cols-2 gap-3 lg:grid-cols-1">
           <Carte>
             <div className="text-sm text-gray-500">On me doit</div>

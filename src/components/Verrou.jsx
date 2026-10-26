@@ -132,8 +132,8 @@ function EcranOubli({ onRetour }) {
   return (
     <Cadre titre="Mot de passe oublié">
       <p className="mb-4 text-sm text-gray-600">
-        Le mot de passe ne peut pas être récupéré. La seule solution est d’<strong>effacer toutes les données</strong> de ce
-        téléphone, puis de créer un nouveau mot de passe et de restaurer ta dernière sauvegarde (Réglages → Restaurer).
+        Le mot de passe ne peut pas être récupéré. La seule solution est d’<strong>effacer toutes les données</strong> de cet
+        appareil, puis de créer un nouveau mot de passe et de restaurer ta dernière sauvegarde (Réglages → Restaurer).
       </p>
       <Champ label="Écris EFFACER pour confirmer">
         <input className={classeInput} value={texte} onChange={(e) => setTexte(e.target.value)} />

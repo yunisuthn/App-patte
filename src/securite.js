@@ -38,7 +38,7 @@ export async function deverrouiller(motDePasse) {
 
 export const verrouiller = () => db.securite.delete('session')
 
-// Mot de passe oublié : on efface tout ce qui est sur ce téléphone.
+// Mot de passe oublié : on efface tout ce qui est sur cet appareil.
 export async function toutEffacer() {
   await db.delete()
   location.reload()
