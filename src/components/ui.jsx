@@ -10,9 +10,9 @@ export function Carte({ children, className = '', sansMarge = false }) {
 
 export function Bouton({ variante = 'principal', className = '', ...props }) {
   const styles = {
-    principal: 'bg-orange-600 text-white hover:bg-orange-700 active:bg-orange-700',
-    secondaire: 'bg-orange-50 text-orange-800 ring-1 ring-orange-200 hover:bg-orange-100 active:bg-orange-100',
-    danger: 'bg-red-50 text-red-700 ring-1 ring-red-200 hover:bg-red-100 active:bg-red-100',
+    principal: 'bg-orange-600 text-white enabled:hover:bg-orange-700 active:bg-orange-700',
+    secondaire: 'bg-orange-50 text-orange-800 ring-1 ring-orange-200 enabled:hover:bg-orange-100 active:bg-orange-100',
+    danger: 'bg-red-50 text-red-700 ring-1 ring-red-200 enabled:hover:bg-red-100 active:bg-red-100',
   }
   return (
     <button

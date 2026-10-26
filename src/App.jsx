@@ -51,7 +51,7 @@ export default function App() {
         {onglet === 'reglages' && <Reglages />}
       </main>
       {/* En bas sur téléphone, barre latérale sur ordinateur. */}
-      <nav className="fixed inset-x-0 bottom-0 z-20 mx-auto flex max-w-md border-t border-orange-100 bg-white pb-[env(safe-area-inset-bottom)] lg:inset-y-0 lg:right-auto lg:w-56 lg:max-w-none lg:flex-col lg:gap-1 lg:border-t-0 lg:border-r lg:p-3">
+      <nav className="fixed inset-x-0 bottom-0 z-20 mx-auto flex max-w-md border-t border-orange-100 bg-white pb-[env(safe-area-inset-bottom)] lg:inset-y-0 lg:right-auto lg:w-56 lg:max-w-none lg:flex-col lg:gap-1 lg:border-t-0 lg:border-r lg:p-3 lg:pb-[max(0.75rem,env(safe-area-inset-bottom))]">
         <div className="mb-4 hidden rounded-xl bg-orange-600 px-4 py-3 text-lg font-bold text-white lg:block">Patte & Fromage</div>
         {ONGLETS.map((o) => (
           <button

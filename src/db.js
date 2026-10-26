@@ -1,6 +1,6 @@
 import Dexie from 'dexie'
 
-// Toutes les données restent dans le navigateur du téléphone (IndexedDB).
+// Toutes les données restent dans le navigateur de l'appareil (IndexedDB), sans synchronisation entre appareils.
 export const db = new Dexie('app-patte')
 
 db.version(1).stores({

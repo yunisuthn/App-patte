@@ -87,7 +87,20 @@ export default function Jour({ onOuvrirClient, onModifie }) {
         <label className="relative flex-1 text-center">
           <span className="block font-semibold capitalize">{dateLongue(date)}</span>
           {date !== aujourdhui() && <span className="text-xs text-orange-700">Toucher pour changer</span>}
-          <input type="date" value={date} onChange={(e) => e.target.value && setDate(e.target.value)} className="absolute inset-0 opacity-0" />
+          {/* Sur ordinateur, cliquer sur le champ invisible n'ouvre pas le calendrier : on le demande explicitement. */}
+          <input
+            type="date"
+            value={date}
+            onChange={(e) => e.target.value && setDate(e.target.value)}
+            onClick={(e) => {
+              try {
+                e.currentTarget.showPicker?.()
+              } catch {
+                // Navigateur qui refuse : le calendrier natif reste accessible autrement.
+              }
+            }}
+            className="absolute inset-0 opacity-0"
+          />
         </label>
         <button type="button" className="h-10 w-10 rounded-full bg-white text-xl shadow-sm" onClick={() => setDate(ajouterJours(date, 1))} aria-label="Jour suivant">
           ›

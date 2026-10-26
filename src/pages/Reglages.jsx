@@ -91,8 +91,9 @@ export default function Reglages() {
         <Carte>
           <h2 className="mb-1 font-semibold">Sauvegarde</h2>
           <p className="mb-3 text-sm text-gray-500">
-            Les données sont gardées uniquement sur ce téléphone. Télécharge une sauvegarde de temps en temps (par exemple chaque
-            vendredi) et garde le fichier ailleurs.
+            Les données sont gardées uniquement sur cet appareil : le téléphone et l’ordinateur ne partagent rien. Télécharge une
+            sauvegarde de temps en temps (par exemple chaque vendredi) et garde le fichier ailleurs. Pour passer d’un appareil à
+            l’autre, restaure la sauvegarde sur le nouvel appareil.
           </p>
           <div className="flex flex-col gap-2">
             <Bouton onClick={telecharger}>Télécharger une sauvegarde</Bouton>
