@@ -49,32 +49,34 @@ export default function Bilan() {
 
   return (
     <div className="space-y-4">
-      <Choix
-        options={[
-          { valeur: 'semaine', label: 'Semaine' },
-          { valeur: 'mois', label: 'Mois' },
-        ]}
-        valeur={mode}
-        onChange={setMode}
-      />
-      <div className="flex items-center justify-between">
-        <button type="button" className="h-10 w-10 rounded-full bg-white text-xl shadow-sm" onClick={() => decaler(-1)} aria-label="Précédent">
-          ‹
-        </button>
-        <span className="font-semibold capitalize">{titre}</span>
-        <button type="button" className="h-10 w-10 rounded-full bg-white text-xl shadow-sm" onClick={() => decaler(1)} aria-label="Suivant">
-          ›
-        </button>
+      <div className="space-y-4 lg:flex lg:items-center lg:gap-8 lg:space-y-0">
+        <Choix
+          options={[
+            { valeur: 'semaine', label: 'Semaine' },
+            { valeur: 'mois', label: 'Mois' },
+          ]}
+          valeur={mode}
+          onChange={setMode}
+        />
+        <div className="flex items-center justify-between lg:w-full lg:max-w-md">
+          <button type="button" className="h-10 w-10 rounded-full bg-white text-xl shadow-sm" onClick={() => decaler(-1)} aria-label="Précédent">
+            ‹
+          </button>
+          <span className="font-semibold capitalize">{titre}</span>
+          <button type="button" className="h-10 w-10 rounded-full bg-white text-xl shadow-sm" onClick={() => decaler(1)} aria-label="Suivant">
+            ›
+          </button>
+        </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-2 gap-3 lg:grid-cols-[repeat(var(--nb),minmax(0,1fr))]" style={{ '--nb': vus.length || 1 }}>
         {vus.map((p) => (
           <Carte key={p.id}>
             <div className="text-sm text-gray-500">{p.nom} vendus</div>
             <div className="text-2xl font-semibold tabular-nums">{qte(ventes, p.id)}</div>
           </Carte>
         ))}
-        <Carte className="col-span-2">
+        <Carte className="col-span-full">
           <dl className="space-y-1">
             <div className="flex justify-between">
               <dt>Chiffre d’affaires</dt>

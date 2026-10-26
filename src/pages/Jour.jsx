@@ -80,7 +80,7 @@ export default function Jour({ onOuvrirClient, onModifie }) {
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between gap-2">
+      <div className="flex items-center justify-between gap-2 lg:mx-auto lg:max-w-lg">
         <button type="button" className="h-10 w-10 rounded-full bg-white text-xl shadow-sm" onClick={() => setDate(ajouterJours(date, -1))} aria-label="Jour précédent">
           ‹
         </button>
@@ -99,7 +99,7 @@ export default function Jour({ onOuvrirClient, onModifie }) {
         </button>
       )}
 
-      <div className="flex gap-2">
+      <div className="flex gap-2 lg:justify-center">
         {NOTES_JOUR.map((n) => (
           <button
             key={n}
@@ -112,105 +112,111 @@ export default function Jour({ onOuvrirClient, onModifie }) {
         ))}
       </div>
 
-      <Carte>
-        <h2 className="mb-3 font-semibold">Vendu payé comptant</h2>
-        <div className="space-y-3">
-          {visibles.map((p) => (
-            <div key={p.id} className="flex items-center justify-between">
-              <div>
-                <div className="font-medium">{p.nom}</div>
-                <div className="text-sm text-gray-500">{ar(p.prix)}</div>
+      <div className="space-y-4 lg:grid lg:grid-cols-2 lg:items-start lg:gap-6 lg:space-y-0">
+        <div className="space-y-4">
+          <Carte>
+            <h2 className="mb-3 font-semibold">Vendu payé comptant</h2>
+            <div className="space-y-3">
+              {visibles.map((p) => (
+                <div key={p.id} className="flex items-center justify-between">
+                  <div>
+                    <div className="font-medium">{p.nom}</div>
+                    <div className="text-sm text-gray-500">{ar(p.prix)}</div>
+                  </div>
+                  <Compteur
+                    taille="grand"
+                    valeur={somme(comptant, p.id)}
+                    modifie={modifie('ventes', p.id)}
+                    onMoins={() => changer('ventes', p.id, -1)}
+                    onPlus={() => changer('ventes', p.id, 1)}
+                  />
+                </div>
+              ))}
+            </div>
+          </Carte>
+
+          <Carte>
+            <div className="mb-3 flex items-center justify-between">
+              <h2 className="font-semibold">Crédits du jour</h2>
+              <Bouton className="py-1.5 text-sm" onClick={() => setFormCredit(true)}>
+                + Crédit
+              </Bouton>
+            </div>
+            {aCredit.length === 0 ? (
+              <p className="text-sm text-gray-400">Aucun crédit ce jour.</p>
+            ) : (
+              <ul className="divide-y divide-gray-100">
+                {aCredit.map((v) => (
+                  <li key={v.id} className={`flex items-center gap-3 py-2 ${v.qte === 0 ? 'opacity-50' : ''}`}>
+                    <button type="button" className="min-w-0 flex-1 text-left" onClick={() => (!nbModifs || confirm(MESSAGE_NON_ENREGISTRE)) && onOuvrirClient(v.clientId)}>
+                      <span className="block font-medium text-orange-800">{nomClient[v.clientId] ?? '?'}</span>
+                      <span className="block text-sm text-gray-600">
+                        {produits.find((p) => p.id === v.produitId)?.nom} ·{' '}
+                        {v.qte === 0 ? <span className="text-red-600">sera supprimé</span> : ar(montantVente(v))}
+                      </span>
+                    </button>
+                    <Compteur
+                      valeur={v.qte}
+                      modifie={modifie('credits', v.id)}
+                      onMoins={() => changer('credits', v.id, -1)}
+                      onPlus={() => changer('credits', v.id, 1)}
+                    />
+                  </li>
+                ))}
+              </ul>
+            )}
+          </Carte>
+        </div>
+
+        <div className="space-y-4">
+          <Carte>
+            <h2 className="mb-3 font-semibold">Ma conso (Ahy)</h2>
+            <div className="space-y-3">
+              {visibles.map((p) => (
+                <div key={p.id} className="flex items-center justify-between">
+                  <span className="font-medium">{p.nom}</span>
+                  <Compteur
+                    valeur={somme(consoAffichee, p.id)}
+                    modifie={modifie('conso', p.id)}
+                    onMoins={() => changer('conso', p.id, -1)}
+                    onPlus={() => changer('conso', p.id, 1)}
+                  />
+                </div>
+              ))}
+            </div>
+          </Carte>
+
+          <Carte className="bg-orange-50">
+            <h2 className="mb-2 font-semibold">Total du jour</h2>
+            <div className="mb-3 flex flex-wrap gap-x-4 gap-y-1">
+              {visibles.map((p) => (
+                <span key={p.id}>
+                  {p.nom} : <strong className="tabular-nums">{somme(ventesAffichees, p.id)}</strong>
+                </span>
+              ))}
+            </div>
+            <dl className="space-y-1 text-sm">
+              <div className="flex justify-between">
+                <dt>Chiffre du jour</dt>
+                <dd className="font-semibold tabular-nums">{ar(total)}</dd>
               </div>
-              <Compteur
-                taille="grand"
-                valeur={somme(comptant, p.id)}
-                modifie={modifie('ventes', p.id)}
-                onMoins={() => changer('ventes', p.id, -1)}
-                onPlus={() => changer('ventes', p.id, 1)}
-              />
-            </div>
-          ))}
+              <div className="flex justify-between text-gray-600">
+                <dt>Dont à crédit</dt>
+                <dd className="tabular-nums">{ar(totalCredit)}</dd>
+              </div>
+              <div className="flex justify-between">
+                <dt>Argent reçu (comptant)</dt>
+                <dd className="font-semibold tabular-nums">{ar(total - totalCredit)}</dd>
+              </div>
+            </dl>
+          </Carte>
         </div>
-      </Carte>
-
-      <Carte>
-        <div className="mb-3 flex items-center justify-between">
-          <h2 className="font-semibold">Crédits du jour</h2>
-          <Bouton className="py-1.5 text-sm" onClick={() => setFormCredit(true)}>
-            + Crédit
-          </Bouton>
-        </div>
-        {aCredit.length === 0 ? (
-          <p className="text-sm text-gray-400">Aucun crédit ce jour.</p>
-        ) : (
-          <ul className="divide-y divide-gray-100">
-            {aCredit.map((v) => (
-              <li key={v.id} className={`flex items-center gap-3 py-2 ${v.qte === 0 ? 'opacity-50' : ''}`}>
-                <button type="button" className="min-w-0 flex-1 text-left" onClick={() => (!nbModifs || confirm(MESSAGE_NON_ENREGISTRE)) && onOuvrirClient(v.clientId)}>
-                  <span className="block font-medium text-orange-800">{nomClient[v.clientId] ?? '?'}</span>
-                  <span className="block text-sm text-gray-600">
-                    {produits.find((p) => p.id === v.produitId)?.nom} ·{' '}
-                    {v.qte === 0 ? <span className="text-red-600">sera supprimé</span> : ar(montantVente(v))}
-                  </span>
-                </button>
-                <Compteur
-                  valeur={v.qte}
-                  modifie={modifie('credits', v.id)}
-                  onMoins={() => changer('credits', v.id, -1)}
-                  onPlus={() => changer('credits', v.id, 1)}
-                />
-              </li>
-            ))}
-          </ul>
-        )}
-      </Carte>
-
-      <Carte>
-        <h2 className="mb-3 font-semibold">Ma conso (Ahy)</h2>
-        <div className="space-y-3">
-          {visibles.map((p) => (
-            <div key={p.id} className="flex items-center justify-between">
-              <span className="font-medium">{p.nom}</span>
-              <Compteur
-                valeur={somme(consoAffichee, p.id)}
-                modifie={modifie('conso', p.id)}
-                onMoins={() => changer('conso', p.id, -1)}
-                onPlus={() => changer('conso', p.id, 1)}
-              />
-            </div>
-          ))}
-        </div>
-      </Carte>
-
-      <Carte className="bg-orange-50">
-        <h2 className="mb-2 font-semibold">Total du jour</h2>
-        <div className="mb-3 flex flex-wrap gap-x-4 gap-y-1">
-          {visibles.map((p) => (
-            <span key={p.id}>
-              {p.nom} : <strong className="tabular-nums">{somme(ventesAffichees, p.id)}</strong>
-            </span>
-          ))}
-        </div>
-        <dl className="space-y-1 text-sm">
-          <div className="flex justify-between">
-            <dt>Chiffre du jour</dt>
-            <dd className="font-semibold tabular-nums">{ar(total)}</dd>
-          </div>
-          <div className="flex justify-between text-gray-600">
-            <dt>Dont à crédit</dt>
-            <dd className="tabular-nums">{ar(totalCredit)}</dd>
-          </div>
-          <div className="flex justify-between">
-            <dt>Argent reçu (comptant)</dt>
-            <dd className="font-semibold tabular-nums">{ar(total - totalCredit)}</dd>
-          </div>
-        </dl>
-      </Carte>
+      </div>
 
       {nbModifs > 0 && (
         <>
           <div className="h-20" />
-          <div className="fixed inset-x-0 bottom-[60px] z-30 mx-auto max-w-md px-3 pb-2">
+          <div className="fixed inset-x-0 bottom-[60px] z-30 mx-auto max-w-md px-3 pb-2 lg:bottom-6 lg:left-56">
             <div className="flex items-center gap-2 rounded-2xl bg-gray-900 p-2 pl-4 text-white shadow-lg">
               <span className="flex-1 text-sm">
                 {nbModifs} modification{nbModifs > 1 ? 's' : ''} non enregistrée{nbModifs > 1 ? 's' : ''}

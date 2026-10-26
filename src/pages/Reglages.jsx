@@ -42,8 +42,8 @@ export default function Reglages() {
   }
 
   return (
-    <div className="space-y-4">
-      {message && <p className="rounded-xl bg-white px-4 py-3 text-sm font-medium text-gray-700 ring-1 ring-orange-200">{message}</p>}
+    <div className="space-y-4 lg:grid lg:grid-cols-2 lg:items-start lg:gap-6 lg:space-y-0">
+      {message && <p className="rounded-xl lg:col-span-2 bg-white px-4 py-3 text-sm font-medium text-gray-700 ring-1 ring-orange-200">{message}</p>}
       <Carte>
         <h2 className="mb-1 font-semibold">Produits et prix</h2>
         <p className="mb-3 text-sm text-gray-500">Un nouveau prix s’applique seulement aux ventes suivantes.</p>
@@ -85,22 +85,24 @@ export default function Reglages() {
         </div>
       </Carte>
 
-      <ChangerMotDePasse />
+      <div className="space-y-4">
+        <ChangerMotDePasse />
 
-      <Carte>
-        <h2 className="mb-1 font-semibold">Sauvegarde</h2>
-        <p className="mb-3 text-sm text-gray-500">
-          Les données sont gardées uniquement sur ce téléphone. Télécharge une sauvegarde de temps en temps (par exemple chaque
-          vendredi) et garde le fichier ailleurs.
-        </p>
-        <div className="flex flex-col gap-2">
-          <Bouton onClick={telecharger}>Télécharger une sauvegarde</Bouton>
-          <label className="rounded-xl bg-orange-50 px-4 py-2.5 text-center font-medium text-orange-800 ring-1 ring-orange-200">
-            Restaurer une sauvegarde
-            <input type="file" accept="application/json,.json" className="hidden" onChange={restaurer} />
-          </label>
-        </div>
-      </Carte>
+        <Carte>
+          <h2 className="mb-1 font-semibold">Sauvegarde</h2>
+          <p className="mb-3 text-sm text-gray-500">
+            Les données sont gardées uniquement sur ce téléphone. Télécharge une sauvegarde de temps en temps (par exemple chaque
+            vendredi) et garde le fichier ailleurs.
+          </p>
+          <div className="flex flex-col gap-2">
+            <Bouton onClick={telecharger}>Télécharger une sauvegarde</Bouton>
+            <label className="rounded-xl bg-orange-50 px-4 py-2.5 text-center font-medium text-orange-800 ring-1 ring-orange-200">
+              Restaurer une sauvegarde
+              <input type="file" accept="application/json,.json" className="hidden" onChange={restaurer} />
+            </label>
+          </div>
+        </Carte>
+      </div>
     </div>
   )
 }

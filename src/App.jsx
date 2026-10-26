@@ -32,14 +32,14 @@ export default function App() {
   }
 
   return (
-    <div className="mx-auto min-h-dvh max-w-md bg-orange-50/60 pb-24">
-      <header className="sticky top-0 z-10 flex items-center justify-between bg-orange-600 px-4 py-3 text-white shadow">
+    <div className="mx-auto min-h-dvh max-w-md bg-orange-50/60 pb-24 lg:max-w-none lg:pb-0 lg:pl-56">
+      <header className="sticky top-0 z-10 flex items-center justify-between bg-orange-600 px-4 py-3 text-white shadow lg:hidden">
         <h1 className="text-lg font-bold">Patte & Fromage</h1>
         <button type="button" onClick={verrouiller} className="rounded-lg bg-white/15 px-3 py-1.5 text-sm font-medium active:bg-white/25">
           Déconnexion
         </button>
       </header>
-      <main className="p-4">
+      <main className="p-4 lg:mx-auto lg:max-w-6xl lg:p-8">
         {onglet === 'jour' && <Jour onOuvrirClient={ouvrirClient} onModifie={setJourModifie} />}
         {onglet === 'clients' &&
           (clientId ? (
@@ -50,18 +50,29 @@ export default function App() {
         {onglet === 'bilan' && <Bilan />}
         {onglet === 'reglages' && <Reglages />}
       </main>
-      <nav className="fixed inset-x-0 bottom-0 z-20 mx-auto flex max-w-md border-t border-orange-100 bg-white pb-[env(safe-area-inset-bottom)]">
+      {/* En bas sur téléphone, barre latérale sur ordinateur. */}
+      <nav className="fixed inset-x-0 bottom-0 z-20 mx-auto flex max-w-md border-t border-orange-100 bg-white pb-[env(safe-area-inset-bottom)] lg:inset-y-0 lg:right-auto lg:w-56 lg:max-w-none lg:flex-col lg:gap-1 lg:border-t-0 lg:border-r lg:p-3">
+        <div className="mb-4 hidden rounded-xl bg-orange-600 px-4 py-3 text-lg font-bold text-white lg:block">Patte & Fromage</div>
         {ONGLETS.map((o) => (
           <button
             key={o.id}
             type="button"
             onClick={() => changerOnglet(o.id)}
-            className={`flex flex-1 flex-col items-center py-2 text-xs ${onglet === o.id ? 'font-semibold text-orange-700' : 'text-gray-500'}`}
+            className={`flex flex-1 flex-col items-center py-2 text-xs lg:flex-none lg:flex-row lg:gap-3 lg:rounded-xl lg:px-4 lg:py-2.5 lg:text-base ${
+              onglet === o.id ? 'font-semibold text-orange-700 lg:bg-orange-50' : 'text-gray-500 lg:hover:bg-gray-50'
+            }`}
           >
             <span className="text-xl">{o.icone}</span>
             {o.label}
           </button>
         ))}
+        <button
+          type="button"
+          onClick={verrouiller}
+          className="mt-auto hidden rounded-xl px-4 py-2.5 text-left text-sm font-medium text-gray-500 hover:bg-gray-50 lg:block"
+        >
+          Déconnexion
+        </button>
       </nav>
     </div>
   )
