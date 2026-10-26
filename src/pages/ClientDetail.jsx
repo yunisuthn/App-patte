@@ -94,50 +94,48 @@ export default function ClientDetail({ clientId, onRetour }) {
             </Bouton>
           )}
         </div>
+      </div>
 
-        <Bouton variante="danger" className="hidden w-full lg:block" onClick={supprimer}>
+      <div className="space-y-4">
+        <Carte sansMarge>
+          <h2 className="px-4 pt-4 pb-2 font-semibold">Historique</h2>
+          {historique.length === 0 ? (
+            <p className="px-4 pb-4 text-sm text-gray-400">Rien pour le moment.</p>
+          ) : (
+            <ul className="divide-y divide-gray-100">
+              {historique.map((l) => (
+                <li key={l.cle} className="flex items-center gap-3 px-4 py-2.5">
+                  <div className="w-20 shrink-0 text-xs text-gray-500 capitalize">{dateCourte(l.date)}</div>
+                  <div className="min-w-0 flex-1">
+                    <div className="font-medium break-words">{l.texte}</div>
+                    {l.detail && <div className="truncate text-xs text-gray-500">{l.detail}</div>}
+                  </div>
+                  <div className="text-right tabular-nums">
+                    <div className={l.montant > 0 ? 'text-orange-700' : 'text-sky-700'}>
+                      {l.montant > 0 ? '+' : '−'}
+                      {ar(Math.abs(l.montant))}
+                    </div>
+                    <div className="text-xs text-gray-400">Total {ar(l.solde)}</div>
+                    {l.quantites && <div className="text-xs text-gray-500">{l.quantites}</div>}
+                  </div>
+                  <button
+                    type="button"
+                    className="text-gray-300 hover:text-red-600 active:text-red-600"
+                    aria-label="Supprimer"
+                    onClick={() => confirm('Supprimer cette ligne ?') && l.supprimer()}
+                  >
+                    ✕
+                  </button>
+                </li>
+              ))}
+            </ul>
+          )}
+        </Carte>
+
+        <Bouton variante="danger" className="w-full lg:ml-auto lg:block lg:w-auto" onClick={supprimer}>
           Supprimer ce client
         </Bouton>
       </div>
-
-      <Carte sansMarge>
-        <h2 className="px-4 pt-4 pb-2 font-semibold">Historique</h2>
-        {historique.length === 0 ? (
-          <p className="px-4 pb-4 text-sm text-gray-400">Rien pour le moment.</p>
-        ) : (
-          <ul className="divide-y divide-gray-100">
-            {historique.map((l) => (
-              <li key={l.cle} className="flex items-center gap-3 px-4 py-2.5">
-                <div className="w-20 shrink-0 text-xs text-gray-500 capitalize">{dateCourte(l.date)}</div>
-                <div className="min-w-0 flex-1">
-                  <div className="font-medium break-words">{l.texte}</div>
-                  {l.detail && <div className="truncate text-xs text-gray-500">{l.detail}</div>}
-                </div>
-                <div className="text-right tabular-nums">
-                  <div className={l.montant > 0 ? 'text-orange-700' : 'text-sky-700'}>
-                    {l.montant > 0 ? '+' : '−'}
-                    {ar(Math.abs(l.montant))}
-                  </div>
-                  <div className="text-xs text-gray-400">Total {ar(l.solde)}</div>
-                  {l.quantites && <div className="text-xs text-gray-500">{l.quantites}</div>}
-                </div>
-                <button
-                  type="button"
-                  className="text-gray-300 active:text-red-600"
-                  aria-label="Supprimer"
-                  onClick={() => confirm('Supprimer cette ligne ?') && l.supprimer()}
-                >
-                  ✕
-                </button>
-              </li>
-            ))}
-          </ul>
-        )}
-      </Carte>
-
-      <Bouton variante="danger" className="w-full lg:hidden" onClick={supprimer}>
-        Supprimer ce client
-      </Bouton>
 
       {form === 'credit' && <FormVenteCredit date={aujourdhui()} clientId={clientId} onFermer={() => setForm(null)} />}
       {form && form !== 'credit' && (

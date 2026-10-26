@@ -32,7 +32,7 @@ export function Compteur({ valeur, onMoins, onPlus, taille = 'normal', modifie =
         aria-label="Moins"
         onClick={onMoins}
         disabled={valeur <= 0}
-        className={`${btn} rounded-full bg-orange-100 font-bold text-orange-800 active:bg-orange-200 disabled:opacity-30`}
+        className={`${btn} rounded-full bg-orange-100 font-bold text-orange-800 enabled:hover:bg-orange-200 active:bg-orange-200 disabled:opacity-30`}
       >
         −
       </button>
@@ -45,7 +45,7 @@ export function Compteur({ valeur, onMoins, onPlus, taille = 'normal', modifie =
         type="button"
         aria-label="Plus"
         onClick={onPlus}
-        className={`${btn} rounded-full bg-orange-600 font-bold text-white active:bg-orange-700`}
+        className={`${btn} rounded-full bg-orange-600 font-bold text-white hover:bg-orange-700 active:bg-orange-700`}
       >
         +
       </button>
@@ -62,7 +62,7 @@ export function Fenetre({ titre, onFermer, children }) {
       >
         <div className="mb-4 flex items-center justify-between">
           <h2 className="text-lg font-semibold">{titre}</h2>
-          <button type="button" onClick={onFermer} className="text-2xl leading-none text-gray-400" aria-label="Fermer">
+          <button type="button" onClick={onFermer} className="text-2xl leading-none text-gray-400 hover:text-gray-600" aria-label="Fermer">
             ×
           </button>
         </div>
@@ -93,7 +93,7 @@ export function Choix({ options, valeur, onChange }) {
           type="button"
           onClick={() => onChange(o.valeur)}
           className={`rounded-full px-4 py-2 text-sm font-medium ring-1 ${
-            valeur === o.valeur ? 'bg-orange-600 text-white ring-orange-600' : 'bg-white text-gray-700 ring-gray-300'
+            valeur === o.valeur ? 'bg-orange-600 text-white ring-orange-600' : 'bg-white text-gray-700 ring-gray-300 hover:bg-gray-50'
           }`}
         >
           {o.label}
