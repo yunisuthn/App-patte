@@ -59,8 +59,8 @@ export default function ClientDetail({ clientId, onRetour }) {
 
   return (
     <div className="space-y-4 lg:grid lg:grid-cols-[22rem_1fr] lg:items-start lg:gap-6 lg:space-y-0">
-      <div className="space-y-4 lg:sticky lg:top-8">
-        <button type="button" onClick={onRetour} className="text-sm font-medium text-orange-700">
+      <div className="space-y-4 lg:sticky lg:top-22">
+        <button type="button" onClick={onRetour} className="text-sm font-medium text-orange-700 lg:hidden">
           ‹ Clients
         </button>
 
