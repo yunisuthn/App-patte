@@ -97,7 +97,7 @@ export default function Reglages() {
           </p>
           <div className="flex flex-col gap-2">
             <Bouton onClick={telecharger}>Télécharger une sauvegarde</Bouton>
-            <label className="rounded-xl bg-orange-50 px-4 py-2.5 text-center font-medium text-orange-800 ring-1 ring-orange-200">
+            <label className="rounded-xl bg-orange-50 px-4 py-2.5 text-center font-medium text-orange-800 ring-1 ring-orange-200 hover:bg-orange-100">
               Restaurer une sauvegarde
               <input type="file" accept="application/json,.json" className="hidden" onChange={restaurer} />
             </label>

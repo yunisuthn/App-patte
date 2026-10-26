@@ -6,8 +6,11 @@ body {
   -webkit-tap-highlight-color: transparent;
 }
 
-/* Tailwind 4 laisse le curseur par défaut sur les boutons ; la souris doit voir qu'ils sont cliquables. */
-button:not(:disabled),
-label:has(> input[type='file']) {
-  cursor: pointer;
+/* Tailwind 4 laisse le curseur par défaut sur les boutons ; la souris doit voir qu'ils sont cliquables.
+   Dans la couche base pour qu'une classe cursor-* puisse la remplacer. */
+@layer base {
+  button:not(:disabled),
+  label:has(> input[type='file']) {
+    cursor: pointer;
+  }
 }

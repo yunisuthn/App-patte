@@ -81,12 +81,17 @@ export default function Jour({ onOuvrirClient, onModifie }) {
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between gap-2 lg:mx-auto lg:max-w-lg">
-        <button type="button" className="h-10 w-10 rounded-full bg-white text-xl shadow-sm" onClick={() => setDate(ajouterJours(date, -1))} aria-label="Jour précédent">
+        <button type="button" className="h-10 w-10 rounded-full bg-white text-xl shadow-sm hover:bg-orange-50" onClick={() => setDate(ajouterJours(date, -1))} aria-label="Jour précédent">
           ‹
         </button>
         <label className="relative flex-1 text-center">
           <span className="block font-semibold capitalize">{dateLongue(date)}</span>
-          {date !== aujourdhui() && <span className="text-xs text-orange-700">Toucher pour changer</span>}
+          {date !== aujourdhui() && (
+            <span className="text-xs text-orange-700">
+              <span className="pointer-fine:hidden">Toucher</span>
+              <span className="hidden pointer-fine:inline">Cliquer</span> pour changer
+            </span>
+          )}
           {/* Sur ordinateur, cliquer sur le champ invisible n'ouvre pas le calendrier : on le demande explicitement. */}
           <input
             type="date"
@@ -102,12 +107,12 @@ export default function Jour({ onOuvrirClient, onModifie }) {
             className="absolute inset-0 opacity-0"
           />
         </label>
-        <button type="button" className="h-10 w-10 rounded-full bg-white text-xl shadow-sm" onClick={() => setDate(ajouterJours(date, 1))} aria-label="Jour suivant">
+        <button type="button" className="h-10 w-10 rounded-full bg-white text-xl shadow-sm hover:bg-orange-50" onClick={() => setDate(ajouterJours(date, 1))} aria-label="Jour suivant">
           ›
         </button>
       </div>
       {date !== aujourdhui() && (
-        <button type="button" className="w-full text-sm font-medium text-orange-700" onClick={() => setDate(aujourdhui())}>
+        <button type="button" className="w-full text-sm font-medium text-orange-700 hover:underline" onClick={() => setDate(aujourdhui())}>
           Revenir à aujourd’hui
         </button>
       )}
@@ -118,7 +123,7 @@ export default function Jour({ onOuvrirClient, onModifie }) {
             key={n}
             type="button"
             onClick={() => changerNote(n)}
-            className={`rounded-full px-4 py-1.5 text-sm ring-1 ${jour?.note === n ? 'bg-gray-800 text-white ring-gray-800' : 'bg-white text-gray-600 ring-gray-300'}`}
+            className={`rounded-full px-4 py-1.5 text-sm ring-1 ${jour?.note === n ? 'bg-gray-800 text-white ring-gray-800' : 'bg-white text-gray-600 ring-gray-300 hover:bg-gray-50'}`}
           >
             {n}
           </button>
@@ -161,8 +166,8 @@ export default function Jour({ onOuvrirClient, onModifie }) {
               <ul className="divide-y divide-gray-100">
                 {aCredit.map((v) => (
                   <li key={v.id} className={`flex items-center gap-3 py-2 ${v.qte === 0 ? 'opacity-50' : ''}`}>
-                    <button type="button" className="min-w-0 flex-1 text-left" onClick={() => (!nbModifs || confirm(MESSAGE_NON_ENREGISTRE)) && onOuvrirClient(v.clientId)}>
-                      <span className="block font-medium text-orange-800">{nomClient[v.clientId] ?? '?'}</span>
+                    <button type="button" className="group min-w-0 flex-1 text-left" onClick={() => (!nbModifs || confirm(MESSAGE_NON_ENREGISTRE)) && onOuvrirClient(v.clientId)}>
+                      <span className="block font-medium text-orange-800 group-hover:underline">{nomClient[v.clientId] ?? '?'}</span>
                       <span className="block text-sm text-gray-600">
                         {produits.find((p) => p.id === v.produitId)?.nom} ·{' '}
                         {v.qte === 0 ? <span className="text-red-600">sera supprimé</span> : ar(montantVente(v))}
