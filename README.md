@@ -25,7 +25,7 @@ en cas d'oubli, il faut tout effacer puis restaurer une sauvegarde.
 
 | Écran | Rôle |
 |---|---|
-| Jour | Compteurs des ventes payées, crédits du jour, ma conso (Ahy), congé/absent |
+| Jour | Compteurs des ventes payées, crédits du jour, ma conso (Ahy), nombre apporté et reste, congé/absent |
 | Crédits | Solde de chaque client : ce qu'il me doit ou ce que je lui dois |
 | Bilan | Totaux par semaine ou par mois, tableau jour par jour |
 | Réglages | Prix des produits, sauvegarde et restauration |

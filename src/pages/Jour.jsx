@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { Fragment, useEffect, useState } from 'react'
 import { useLiveQuery } from 'dexie-react-hooks'
 import { db, enregistrerJour, montantVente, NOTES_JOUR } from '../db'
 import { ajouterJours, ar, aujourdhui, dateLongue } from '../format'
@@ -6,7 +6,7 @@ import { Bouton, Carte, Compteur } from '../components/ui'
 import FormVenteCredit from '../components/FormVenteCredit'
 
 const somme = (lignes, produitId) => lignes.filter((l) => l.produitId === produitId).reduce((s, l) => s + l.qte, 0)
-const VIDE = { ventes: {}, conso: {}, credits: {} }
+const VIDE = { ventes: {}, conso: {}, apports: {}, credits: {} }
 export const MESSAGE_NON_ENREGISTRE = 'Les modifications non enregistrées seront perdues. Continuer ?'
 
 export default function Jour({ onOuvrirClient, onModifie }) {
@@ -29,9 +29,10 @@ export default function Jour({ onOuvrirClient, onModifie }) {
   const clients = useLiveQuery(() => db.clients.toArray(), [])
   const ventes = useLiveQuery(() => db.ventes.where('date').equals(date).toArray(), [date])
   const conso = useLiveQuery(() => db.conso.where('date').equals(date).toArray(), [date])
+  const apports = useLiveQuery(() => db.apports.where('date').equals(date).toArray(), [date])
   const jour = useLiveQuery(() => db.jours.get(date), [date])
 
-  if (!produits || !clients || !ventes || !conso) return null
+  if (!produits || !clients || !ventes || !conso || !apports) return null
 
   const nomClient = Object.fromEntries(clients.map((c) => [c.id, c.nom]))
   const prixDe = (produitId) => produits.find((p) => p.id === Number(produitId))?.prix ?? 0
@@ -44,6 +45,10 @@ export default function Jour({ onOuvrirClient, onModifie }) {
     ...conso,
     ...Object.entries(brouillon.conso).map(([pid, qte]) => ({ produitId: Number(pid), qte })),
   ]
+  const apportsAffiches = [
+    ...apports,
+    ...Object.entries(brouillon.apports).map(([pid, qte]) => ({ produitId: Number(pid), qte })),
+  ]
   const comptant = ventesAffichees.filter((v) => !v.clientId)
   const aCredit = ventesAffichees.filter((v) => v.clientId)
   // On affiche aussi un produit désactivé s'il a des ventes ce jour-là.
@@ -54,6 +59,18 @@ export default function Jour({ onOuvrirClient, onModifie }) {
   const changer = (groupe, cle, delta) =>
     setBrouillon((b) => ({ ...b, [groupe]: { ...b[groupe], [cle]: (b[groupe][cle] ?? 0) + delta } }))
   const modifie = (groupe, cle) => !!brouillon[groupe][cle]
+  // Le champ « apporté » donne un nombre ; le brouillon garde l'écart avec ce qui est enregistré.
+  const fixerApport = (produitId, texte) => {
+    const qte = Math.max(0, Math.floor(Number(texte)) || 0)
+    setBrouillon((b) => ({ ...b, apports: { ...b.apports, [produitId]: qte - somme(apports, produitId) } }))
+  }
+  // Reste = apporté − vendu (comptant et crédit) − ma conso. Pas de reste tant que rien n'est apporté.
+  const stock = visibles.map((p) => {
+    const apporte = somme(apportsAffiches, p.id)
+    const vendu = somme(ventesAffichees, p.id)
+    const ahy = somme(consoAffichee, p.id)
+    return { produit: p, apporte, vendu, ahy, reste: apporte ? apporte - vendu - ahy : null }
+  })
 
   function setDate(nouvelle) {
     if (nbModifs && !confirm(MESSAGE_NON_ENREGISTRE)) return
@@ -202,6 +219,48 @@ export default function Jour({ onOuvrirClient, onModifie }) {
                 </div>
               ))}
             </div>
+          </Carte>
+
+          <Carte>
+            <h2 className="mb-3 font-semibold">Apporté et reste</h2>
+            <div className="grid grid-cols-[1fr_auto_auto] items-center gap-x-4 gap-y-3">
+              <span />
+              <span className="text-center text-xs text-gray-500">Apporté</span>
+              <span className="text-right text-xs text-gray-500">Reste</span>
+              {stock.map(({ produit: p, apporte, vendu, ahy, reste }) => (
+                <Fragment key={p.id}>
+                  <div className="min-w-0">
+                    <div className="font-medium">{p.nom}</div>
+                    <div className="text-sm text-gray-500">
+                      vendu {vendu} · ahy {ahy}
+                    </div>
+                  </div>
+                  <input
+                    type="number"
+                    inputMode="numeric"
+                    min="0"
+                    step="1"
+                    placeholder="0"
+                    aria-label={`${p.nom} apportés`}
+                    value={apporte || ''}
+                    onChange={(e) => fixerApport(p.id, e.target.value)}
+                    className={`w-20 rounded-xl border px-3 py-2 text-right text-base font-semibold tabular-nums focus:border-orange-500 focus:outline-none ${
+                      modifie('apports', p.id) ? 'border-orange-400 text-orange-600' : 'border-gray-300'
+                    }`}
+                  />
+                  <span
+                    className={`min-w-12 text-right text-2xl font-semibold tabular-nums ${
+                      reste == null ? 'text-gray-300' : reste < 0 ? 'text-red-600' : ''
+                    }`}
+                  >
+                    {reste ?? '—'}
+                  </span>
+                </Fragment>
+              ))}
+            </div>
+            {stock.some((s) => s.reste < 0) && (
+              <p className="mt-3 text-sm text-red-600">Plus de vendus que d’apportés : vérifier le nombre apporté.</p>
+            )}
           </Carte>
 
           <Carte className="bg-orange-50">
