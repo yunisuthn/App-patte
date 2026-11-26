@@ -22,6 +22,9 @@ db.version(1).stores({
 // Mot de passe et session du jour. Jamais inclus dans les sauvegardes.
 db.version(2).stores({ securite: 'cle' })
 
+// Nombre d'articles apportés au bureau ce jour-là, pour calculer le reste : { date, produitId, qte, prix }
+db.version(3).stores({ apports: '++id, date, produitId' })
+
 db.on('populate', (tx) => {
   tx.table('produits').bulkAdd([
     { nom: 'Patte', prix: 1200, actif: true },
@@ -114,7 +117,7 @@ export const texteQuantites = (qtes, produits) =>
     .map((p) => `${qtes[p.id]} ${p.nom.toLowerCase()}`)
     .join(' + ')
 
-// Ajoute ou retire une unité sur le compteur comptant (ventes) ou « ma conso » d'un jour.
+// Ajoute ou retire des unités sur le compteur comptant (ventes), « ma conso » ou « apporté » d'un jour.
 export async function ajusterCompteur(nomTable, date, produitId, delta) {
   const table = db.table(nomTable)
   await db.transaction('rw', table, db.produits, async () => {
@@ -156,11 +159,11 @@ export async function ajusterCredit(vente, delta) {
 }
 
 // Enregistre en une seule fois les changements préparés sur la page Jour.
-// brouillon = { ventes: {produitId: delta}, conso: {produitId: delta}, credits: {venteId: delta} }
+// brouillon = { ventes, conso, apports: {produitId: delta}, credits: {venteId: delta} }
 export async function enregistrerJour(date, brouillon) {
-  await db.transaction('rw', db.ventes, db.conso, db.produits, db.mouvements, async () => {
-    for (const [table, deltas] of [['ventes', brouillon.ventes], ['conso', brouillon.conso]]) {
-      for (const [produitId, delta] of Object.entries(deltas)) {
+  await db.transaction('rw', db.ventes, db.conso, db.apports, db.produits, db.mouvements, async () => {
+    for (const table of ['ventes', 'conso', 'apports']) {
+      for (const [produitId, delta] of Object.entries(brouillon[table])) {
         if (delta) await ajusterCompteur(table, date, Number(produitId), delta)
       }
     }
